@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitCal - AI Fitness Companion</title>
+    <style>
+        /* Define the color palette based on your mobile app screenshot */
+        :root {
+            --primary-orange: #FF6B00; /* Main orange accent */
+            --dark-background: #000000;
+            --card-background: #1C1C1E; /* Dark grey for cards and sidebar base */
+            --text-light: #FFFFFF;
+            --text-dark-gray: #8E8E93; /* Secondary text color */
+            --text-medium-gray: #6C6C70; /* Even lighter grey, for labels */
+            --progress-bar-fill: #FF9F0A; /* Lighter orange for progress indicators */
+            --weekly-trend-bar: #FF6B00; /* Orange for weekly trend bars */
+            --weekly-trend-current-bar: #FF9F0A; /* Lighter orange for current week bar */
+            --outline-color: #3A3A3C; /* Border/outline color */
+            --red-accent: #FF3B30; /* Red accent for edit icon */
+            --avatar-background: #6C5CE7; /* Purple for user avatar */
+
+            --sidebar-background: #1C1C1E; /* Solid background for sidebar as in image */
+            --active-nav-item-background: var(--primary-orange); 
+            --sidebar-hover-background: rgba(255, 107, 0, 0.1); /* Subtle hover for nav items */
+            
+            --card-radius: 16px;
+            --element-radius: 12px;
+            --small-radius: 8px;
+        }
+        
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; /* Prioritize SF Pro for iOS feel */
+        }
+        
+        body {
+            background: var(--dark-background);
+            color: var(--text-light);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased; /* Smoother fonts */
+            -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px; /* Base font size */
+        }
+        
+        .web-app {
+            display: grid;
+            grid-template-columns: 280px 1fr; /* Sidebar width and main content */
+            grid-template-rows: 1fr; /* Main content area, header handled within main-content */
+            width: 1920px; /* Target web app width */
+            height: 1080px; /* Target web app height */
+            background: var(--dark-background);
+            border-radius: var(--card-radius); 
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.6); /* More prominent shadow */
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            background: var(--sidebar-background); /* Solid background as in image */
+            border-right: 1px solid var(--outline-color);
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-y: auto; 
+        }
+
+        .logo {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .logo h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+            letter-spacing: -0.03em; 
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem; 
+            flex-grow: 1; 
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+            color: var(--text-dark-gray);
+            text-decoration: none;
+            border-radius: var(--element-radius);
+            font-size: 1.05rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            user-select: none; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--sidebar-hover-background);
+            color: var(--text-light);
+        }
+
+        .nav-item.active {
+            background: var(--active-nav-item-background); 
+            color: var(--text-light);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3); 
+        }
+        
+        /* Ensure active item icons are white */
+        .nav-item.active .icon svg {
+            stroke: var(--text-light); /* Active icon stroke to white */
+        }
+        .nav-item .icon svg {
+            stroke: var(--text-dark-gray); /* Default icon stroke color */
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .nav-item.highlight {
+            background: linear-gradient(135deg, var(--primary-orange), var(--progress-bar-fill)); 
+            color: var(--text-light);
+            margin-top: auto; 
+            padding: 1.2rem 1.5rem;
+            border-radius: var(--card-radius);
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.4);
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .nav-item.highlight:hover {
+            opacity: 0.9;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 0, 0.5);
+        }
+        .nav-item.highlight .icon svg {
+            stroke: var(--text-light); /* Active icon stroke to white */
+        }
+
+
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; 
+        }
+
+        /* Header */
+        .header {
+            background: var(--dark-background);
+            padding: 2rem 3rem; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--outline-color);
+            position: sticky; 
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content h1 {
+            font-size: 3rem; 
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.04em;
+        }
+
+        .header-content p.date {
+            font-size: 1.2rem;
+            color: var(--text-dark-gray);
+            font-weight: 400;
+        }
+        
+        .header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header .current-time {
+            font-size: 1.1rem; /* Smaller, as in image */
+            color: var(--primary-orange);
+            font-weight: 600;
+            margin-right: 1.5rem; /* Space before BU */
+        }
+
+        .notification-btn {
+            background: var(--card-background); 
+            border: 1px solid var(--outline-color);
+            color: var(--text-dark-gray);
+            font-size: 1.5rem; 
+            cursor: pointer;
+            padding: 0.7rem;
+            border-radius: 50%; 
+            width: 50px; 
+            height: 50px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+        .notification-btn:hover {
+            background: var(--outline-color);
+            border-color: var(--primary-orange);
+        }
+
+        .user-avatar {
+            width: 50px; /* Slightly smaller avatar as in image */
+            height: 50px;
+            background: var(--avatar-background);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 24px;
+            color: var(--text-light);
+            border: 2px solid rgba(255, 255, 255, 0.2); 
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            flex-grow: 1;
+            padding: 3rem; 
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Three equal columns */
+            grid-auto-rows: min-content; /* Adjust rows based on content */
+            gap: 2.5rem; 
+            align-content: start;
+            overflow-y: auto; 
+        }
+
+        .metric-card, .wide-card {
+            background: var(--card-background);
+            border-radius: var(--card-radius);
+            padding: 2.2rem; 
+            border: 1px solid var(--outline-color);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+        }
+
+        .metric-card {
+            align-items: center;
+            text-align: center;
+            /* No justify-content: space-between here as per image layout */
+        }
+
+        .wide-card {
+            grid-column: span 3; /* Weight Journey spans all 3 columns */
+        }
+        
+        .small-card {
+            grid-column: span 1; /* Weekly Trend and Daily Summary take 1 column each */
+        }
+
+        .metric-header {
+            display: flex;
+            flex-direction: column; /* Stack percentage below title */
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem; /* Space before circle */
+        }
+        .metric-header h3 {
+            font-size: 1.3rem; 
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+        .metric-header .percentage-badge {
+            background: none; /* No background for percentage as in image */
+            color: var(--text-dark-gray); /* Grey color for percentage */
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.95rem; /* Slightly smaller */
+            font-weight: 500;
+            margin-left: 0;
+            letter-spacing: 0;
+        }
+
+        .metric-circle {
+            width: 140px; 
+            height: 140px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem; /* Space before value */
+            position: relative;
+            background: transparent;
+        }
+        .metric-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid var(--outline-color); 
+            z-index: 1;
+        }
+
+        /* Dynamic progress circle (simulated with border-top) */
+        .metric-circle.steps::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid transparent;
+            border-top-color: var(--progress-bar-fill); 
+            transform: rotate(-135deg); 
+            z-index: 2;
+        }
+        .metric-circle.calories::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid transparent;
+            border-top-color: var(--progress-bar-fill);
+            transform: rotate(-130deg); 
+            z-index: 2;
+        }
+
+        .metric-circle .icon {
+            font-size: 3.5rem; 
+            color: var(--progress-bar-fill);
+            position: relative;
+            z-index: 3;
+        }
+        /* SVG icons for steps and calories (updated for better sizing) */
+        .metric-circle .icon.steps-icon {
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="%23FF9F0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 19H9M12 17V3L6 8M18 10L12 15"/></svg>');
+            width: 60px;
+            height: 60px;
+        }
+
+        .metric-circle .icon.calories-icon {
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="%23FF9F0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 20.75c1.1-.33 2.1-.87 3-1.6M14 17.5c.34-1 .36-2.07.21-3.13-.34-2.15-2.22-3.8-4.47-4.14-2.25-.34-4.22.9-5.11 2.91-.48 1.08-.57 2.27-.32 3.42.3 1.4.92 2.65 1.77 3.73M17.5 10c0-2.2-1.8-4-4-4s-4 1.8-4 4 1.8 4 4 4 4-1.8 4-4Z"></path><path d="M10.74 2.05c-.06-.52.27-1.02.79-1.08s1.02.27 1.08.79c.02.16 0 .32-.05.47M7.5 5.5c-.32.48-.26 1.15.15 1.54.41.39 1.1.41 1.5.07M20.5 5.5c.32.48.26 1.15-.15 1.54-.41.39-1.1.41-1.5.07M20.9 9.25c.52.06 1.02-.27 1.08-.79s-.27-1.02-.79-1.08c-.16-.02-.32 0-.47.05M17.5 20.5c.32-.48.26-1.15-.15-1.54-.41-.39-1.1-.41-1.5-.07M3.1 9.25c-.52.06-1.02-.27-1.08-.79s-.27-1.02.79-1.08c.16-.02-.32 0-.47.05M4 17.5c-.48-.32-1.15-.26-1.54.15-.39.41-.41 1.1-.07 1.5"></path></svg>');
+            width: 60px;
+            height: 60px;
+        }
+
+        .metric-value {
+            font-size: 2.2rem; /* Adjusted size as in image */
+            font-weight: bold;
+            color: var(--text-light);
+            letter-spacing: -0.05em;
+        }
+        
+        /* AI Recommendation Card specific styling */
+        .ai-recommendation-card .metric-header {
+            flex-direction: row; /* Title and badge side-by-side */
+            margin-bottom: 0;
+            align-self: flex-start; /* Align left */
+        }
+        .ai-recommendation-card .metric-header h3 {
+            margin-bottom: 0;
+            font-size: 1.3rem;
+        }
+        .ai-recommendation-card .metric-circle {
+            border: 8px solid var(--outline-color); 
+            margin-top: 2rem; /* More space from header */
+            margin-bottom: 1rem;
+            width: 100px; /* Smaller circle for AI card */
+            height: 100px;
+        }
+        .ai-recommendation-card .icon {
+            font-size: 3rem; 
+            color: #725BCC; 
+        }
+        .ai-recommendation-card p.recommendation-text {
+            font-size: 1.1rem; 
+            color: var(--text-light);
+            text-align: left; /* Align left */
+            align-self: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        .ai-recommendation-card p.subtitle {
+            color: var(--text-dark-gray); 
+            font-size: 0.95rem;
+            text-align: left;
+            align-self: flex-start;
+        }
+
+        /* Weight Journey Card */
+        .weight-journey {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column layout within card */
+            gap: 1.5rem;
+            padding: 2.2rem;
+            position: relative;
+        }
+
+        .weight-journey h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0; /* Adjusted margin */
+            color: var(--text-light);
+            letter-spacing: -0.03em;
+        }
+
+        .weight-journey .edit-icon {
+            position: absolute;
+            top: 2.2rem;
+            right: 2.2rem;
+            width: 40px; 
+            height: 40px;
+            border-radius: 50%;
+            background: var(--red-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3);
+        }
+        .weight-journey .edit-icon:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 15px rgba(255, 59, 48, 0.4);
+        }
+        .weight-journey .edit-icon::before {
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>');
+            width: 24px;
+            height: 24px;
+        }
+
+        .weight-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            text-align: center;
+            margin-top: 2rem; /* Space from title */
+            margin-bottom: 1.5rem; /* Space before progress bar */
+        }
+
+        .weight-stat-item p:first-child {
+            font-size: 1.8rem; /* Adjusted value size */
+            font-weight: bold;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.04em;
+        }
+
+        .weight-stat-item p:last-child {
+            font-size: 0.95rem; /* Adjusted label size */
+            color: var(--text-dark-gray);
+            font-weight: 500;
+        }
+
+        .weight-stat-item:nth-child(3) p:first-child {
+            color: var(--primary-orange);
+            cursor: pointer;
+            text-decoration: none; 
+        }
+        
+        .weight-progress-line {
+            height: 8px; 
+            background: var(--outline-color);
+            border-radius: 4px;
+            margin-bottom: 1.5rem; /* Space before weekly trend */
+            position: relative;
+        }
+        .weight-progress-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 45%; 
+            background: var(--progress-bar-fill);
+            border-radius: 4px;
+            transition: width 0.5s ease-out;
+        }
+
+        .weekly-trend-section {
+            display: flex;
+            flex-direction: column;
+            margin-top: 1.5rem;
+        }
+
+        .weekly-trend-graph {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 120px; /* Reduced height to fit in card */
+            padding-bottom: 10px;
+            gap: 15px;
+        }
+
+        .trend-bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1; 
+        }
+
+        .trend-bar {
+            width: 25px; /* Thinner bars */
+            background: var(--weekly-trend-bar);
+            border-radius: 6px 6px 0 0;
+            margin-bottom: 8px;
+            transition: height 0.3s ease;
+            box-shadow: 0 -4px 10px rgba(255, 107, 0, 0.15);
+        }
+
+        .trend-bar.current {
+            background: var(--weekly-trend-current-bar);
+            box-shadow: 0 -4px 10px rgba(255, 159, 10, 0.25);
+        }
+
+        .trend-label {
+            font-size: 0.9rem; /* Smaller label */
+            color: var(--text-medium-gray);
+            font-weight: 500;
+        }
+
+        /* Weekly Trend and Daily Summary Cards (individual cards as per image) */
+        .weekly-trend-card, .daily-summary-card {
+            grid-column: span 1; /* Each takes 1 column */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .weekly-trend-card h3, .daily-summary-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        .weekly-trend-card .progress-detail, .daily-summary-card .progress-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .weekly-trend-card .progress-detail span:first-child, .daily-summary-card .progress-detail span:first-child {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .weekly-trend-card .progress-detail span:last-child, .daily-summary-card .progress-detail span:last-child {
+            font-size: 1.05rem;
+            color: var(--primary-orange); /* Use primary orange for values */
+            font-weight: 600;
+        }
+
+        .small-progress-bar {
+            height: 8px;
+            background: var(--outline-color);
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .small-progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease-out;
+        }
+        .small-progress-fill.water {
+            background: #007AFF; /* iOS blue for water */
+        }
+        .small-progress-fill.sleep {
+            background: #34C759; /* iOS green for sleep */
+        }
+    </style>
+</head>
+<body>
+    <div class="web-app">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>FitCal</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active">
+                    <span class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+                    </span>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </span>
+                    <span>Workouts</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V5a3 3 0 0 0-3-3Z"/><path d="M12 14v8"/><path d="M21 15h-3a3 3 0 0 0-3 3v4h6v-4a3 3 0 0 0-3-3Z"/><path d="M3 15h3a3 3 0 0 1 3 3v4H3v-4a3 3 0 0 1-3-3Z"/></svg>
+                    </span>
+                    <span>Meals</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    </span>
+                    <span>Music</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </span>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </span>
+                    <span>Explore</span>
+                </a>
+            </nav>
+            <a href="#" class="nav-item highlight">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                </span>
+                <span>Full Plan</span>
+            </a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-content">
+                    <h1>Good Morning <span style="color: var(--text-light);">Bubbles</span></h1>
+                    <p class="date">Wednesday, November 5</p>
+                </div>
+                <div class="user-info">
+                    <div class="current-time">11:55 AM</div>
+                    <button class="notification-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    </button>
+                    <div class="user-avatar">BU</div>
+                </div>
+            </header>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Steps Card -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3>Steps</h3>
+                        <div class="percentage-badge">83% of goal</div>
+                    </div>
+                    <div class="metric-circle steps">
+                        <span class="icon steps-icon"></span>
+                    </div>
+                    <p class="metric-value">12 457</p>
+                </div>
+
+                <!-- Calories Card -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3>Calories</h3>
+                        <div class="percentage-badge">84% of goal</div>
+                    </div>
+                    <div class="metric-circle calories">
+                        <span class="icon calories-icon"></span>
+                    </div>
+                    <p class="metric-value">1 843</p>
+                </div>
+
+                <!-- AI Recommendations Card -->
+                <div class="metric-card ai-recommendation-card">
+                    <div class="metric-header" style="flex-direction: row; justify-content: flex-start;">
+                        <h3>AI Recommendation</h3>
+                    </div>
+                    <div class="metric-circle">
+                        <span class="icon" style="font-size: 3rem; color: #725BCC;">💡</span>
+                    </div>
+                    <p class="recommendation-text">Increase protein intake</p>
+                    <p class="subtitle">Based on your recent meals and activity levels.</p>
+                </div>
+
+                <!-- Weight Journey Card -->
+                <div class="wide-card weight-journey">
+                    <h2>Weight Journey</h2>
+                    <div class="edit-icon"></div>
+                    <div class="weight-stats-grid">
+                        <div class="weight-stat-item">
+                            <p>75 kg</p>
+                            <p>CURRENT</p>
+                        </div>
+                        <div class="weight-stat-item">
+                            <p>70 kg</p>
+                            <p>TARGET</p>
+                        </div>
+                        <div class="weight-stat-item">
+                            <p style="cursor: pointer;">Set goals</p>
+                            <p>PROGRESS</p>
+                        </div>
+                    </div>
+                    <div class="weight-progress-line"></div>
+
+                    <div class="weekly-trend-section">
+                        <h3>Weekly Trend</h3>
+                        <div class="weekly-trend-graph">
+                            <div class="trend-bar-item">
+                                <div class="trend-bar" style="height: 40%;"></div>
+                                <span class="trend-label">W1</span>
+                            </div>
+                            <div class="trend-bar-item">
+                                <div class="trend-bar" style="height: 60%;"></div>
+                                <span class="trend-label">W2</span>
+                            </div>
+                            <div class="trend-bar-item">
+                                <div class="trend-bar" style="height: 75%;"></div>
+                                <span class="trend-label">W3</span>
+                            </div>
+                            <div class="trend-bar-item">
+                                <div class="trend-bar" style="height: 65%;"></div>
+                                <span class="trend-label">W4</span>
+                            </div>
+                            <div class="trend-bar-item">
+                                <div class="trend-bar current" style="height: 83%;"></div>
+                                <span class="trend-label">Now</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weekly Trend Card (Individual Card) -->
+                <div class="metric-card small-card weekly-trend-card">
+                    <h3>Weekly Trend</h3>
+                    <p class="subtitle" style="margin-bottom: 2rem;">Your progress over the last few weeks.</p>
+                    <div class="progress-detail">
+                        <span>Average Steps</span>
+                        <span style="color: var(--primary-orange);">9,800</span>
+                    </div>
+                    <div class="small-progress-bar">
+                        <div class="small-progress-fill water" style="width: 70%;"></div>
+                    </div>
+                    <div class="progress-detail" style="margin-top: 1.5rem;">
+                        <span>Avg. Calories</span>
+                        <span style="color: var(--primary-orange);">1,500</span>
+                    </div>
+                    <div class="small-progress-bar">
+                        <div class="small-progress-fill sleep" style="width: 80%;"></div>
+                    </div>
+                </div>
+
+                <!-- Daily Summary Card (Individual Card) -->
+                <div class="metric-card small-card daily-summary-card">
+                    <h3>Daily Summary</h3>
+                    <p class="subtitle" style="margin-bottom: 2rem;">Quick overview of your day.</p>
+                    <div class="progress-detail">
+                        <span>Water Intake</span>
+                        <span style="color: #007AFF;">2.5 L / 3 L</span>
+                    </div>
+                    <div class="small-progress-bar">
+                        <div class="small-progress-fill water" style="width: 83%;"></div>
+                    </div>
+                    <div class="progress-detail" style="margin-top: 1.5rem;">
+                        <span>Sleep Overview</span>
+                        <span style="color: #34C759;">7h 30m</span>
+                    </div>
+                    <div class="small-progress-bar">
+                        <div class="small-progress-fill sleep" style="width: 90%;"></div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</body>
+</html>
