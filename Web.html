@@ -4,91 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitCal - AI Fitness Companion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Define the color palette based on your mobile app screenshot */
+        /* Ultra Premium iOS Color Palette */
         :root {
-            --primary-orange: #FF6B00; /* Main orange accent */
+            --primary-orange: #FF6B35;
+            --primary-orange-glow: rgba(255, 107, 53, 0.4);
             --dark-background: #000000;
-            --card-background: #1C1C1E; /* Dark grey for cards and sidebar base */
+            --card-background: rgba(28, 28, 30, 0.8);
+            --card-background-solid: #1C1C1E;
+            --glass-background: rgba(28, 28, 30, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --text-light: #FFFFFF;
-            --text-dark-gray: #8E8E93; /* Secondary text color */
-            --text-medium-gray: #6C6C70; /* Even lighter grey, for labels */
-            --progress-bar-fill: #FF9F0A; /* Lighter orange for progress indicators */
-            --weekly-trend-bar: #FF6B00; /* Orange for weekly trend bars */
-            --weekly-trend-current-bar: #FF9F0A; /* Lighter orange for current week bar */
-            --outline-color: #3A3A3C; /* Border/outline color */
-            --red-accent: #FF3B30; /* Red accent for edit icon */
-            --avatar-background: #6C5CE7; /* Purple for user avatar */
+            --text-dark-gray: #8E8E93;
+            --text-medium-gray: #6C6C70;
+            --progress-bar-fill: #FF9F0A;
+            --weekly-trend-bar: #FF6B35;
+            --weekly-trend-current-bar: #FF9F0A;
+            --outline-color: rgba(58, 58, 60, 0.6);
+            --red-accent: #FF453A;
+            --avatar-background: linear-gradient(135deg, #6C5CE7, #A363D9);
+            --blue-accent: #0A84FF;
+            --green-accent: #30D158;
 
-            --sidebar-background: #1C1C1E; /* Solid background for sidebar as in image */
-            --active-nav-item-background: var(--primary-orange); 
-            --sidebar-hover-background: rgba(255, 107, 0, 0.1); /* Subtle hover for nav items */
+            --sidebar-background: rgba(22, 22, 24, 0.95);
+            --active-nav-item-background: var(--primary-orange);
+            --sidebar-hover-background: rgba(255, 107, 53, 0.1);
             
-            --card-radius: 16px;
-            --element-radius: 12px;
-            --small-radius: 8px;
+            --card-radius: 24px;
+            --element-radius: 16px;
+            --small-radius: 12px;
+            
+            --blur-intensity: 20px;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.25);
+            --shadow-strong: 0 15px 40px rgba(0, 0, 0, 0.35);
+            --shadow-glow: 0 0 30px rgba(255, 107, 53, 0.3);
         }
         
-        /* Base styles */
+        /* Base styles with premium feel */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; /* Prioritize SF Pro for iOS feel */
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
         }
         
         body {
             background: var(--dark-background);
             color: var(--text-light);
             min-height: 100vh;
-            -webkit-font-smoothing: antialiased; /* Smoother fonts */
+            -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 16px; /* Base font size */
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Animated background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(108, 92, 231, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(10, 132, 255, 0.05) 0%, transparent 50%);
+            z-index: -1;
         }
         
         .web-app {
             display: grid;
-            grid-template-columns: 280px 1fr; /* Sidebar width and main content */
-            grid-template-rows: 1fr; /* Main content area, header handled within main-content */
-            width: 1920px; /* Target web app width */
-            height: 1080px; /* Target web app height */
-            background: var(--dark-background);
-            border-radius: var(--card-radius); 
+            grid-template-columns: 300px 1fr;
+            width: 95vw;
+            height: 95vh;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: var(--card-radius);
             overflow: hidden;
-            box-shadow: 0 0 60px rgba(0, 0, 0, 0.6); /* More prominent shadow */
+            box-shadow: var(--shadow-strong);
+            backdrop-filter: blur(var(--blur-intensity));
+            border: 1px solid var(--glass-border);
+            position: relative;
         }
 
-        /* Sidebar Navigation */
+        /* Premium Sidebar */
         .sidebar {
-            background: var(--sidebar-background); /* Solid background as in image */
-            border-right: 1px solid var(--outline-color);
+            background: var(--sidebar-background);
+            border-right: 1px solid var(--glass-border);
             padding: 2.5rem 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            overflow-y: auto; 
+            overflow-y: auto;
+            backdrop-filter: blur(var(--blur-intensity));
+            position: relative;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.03) 0%, transparent 50%);
+            pointer-events: none;
         }
 
         .logo {
             margin-bottom: 2.5rem;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .logo h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-orange);
-            letter-spacing: -0.03em; 
+        .logo img {
+            max-width: 160px;
+            height: auto;
+            filter: drop-shadow(0 5px 15px rgba(255, 107, 53, 0.3));
         }
 
         .nav-menu {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem; 
-            flex-grow: 1; 
+            gap: 0.5rem;
+            flex-grow: 1;
         }
 
         .nav-item {
@@ -101,81 +147,128 @@
             border-radius: var(--element-radius);
             font-size: 1.05rem;
             font-weight: 500;
-            transition: all 0.2s ease-in-out;
-            user-select: none; 
-            -webkit-tap-highlight-color: transparent;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
         }
 
         .nav-item:hover {
             background: var(--sidebar-hover-background);
             color: var(--text-light);
+            transform: translateX(5px);
         }
 
         .nav-item.active {
-            background: var(--active-nav-item-background); 
+            background: var(--active-nav-item-background);
             color: var(--text-light);
             font-weight: 600;
-            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3); 
+            box-shadow: var(--shadow-glow);
+            transform: translateX(0);
         }
-        
-        /* Ensure active item icons are white */
-        .nav-item.active .icon svg {
-            stroke: var(--text-light); /* Active icon stroke to white */
+
+        .nav-item .icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
         }
-        .nav-item .icon svg {
-            stroke: var(--text-dark-gray); /* Default icon stroke color */
-            fill: none;
-            stroke-width: 2;
+
+        .nav-item:hover .icon {
+            transform: scale(1.1);
+        }
+
+        .nav-item.active .icon {
+            transform: scale(1.1);
         }
 
         .nav-item.highlight {
-            background: linear-gradient(135deg, var(--primary-orange), var(--progress-bar-fill)); 
+            background: linear-gradient(135deg, var(--primary-orange), #FF8E53);
             color: var(--text-light);
-            margin-top: auto; 
+            margin-top: auto;
             padding: 1.2rem 1.5rem;
             border-radius: var(--card-radius);
             font-weight: 600;
-            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.4);
+            box-shadow: var(--shadow-glow);
             text-align: center;
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        .nav-item.highlight:hover {
-            opacity: 0.9;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 107, 0, 0.5);
-        }
-        .nav-item.highlight .icon svg {
-            stroke: var(--text-light); /* Active icon stroke to white */
+            position: relative;
+            overflow: hidden;
         }
 
+        .nav-item.highlight::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+        }
+
+        .nav-item.highlight:hover::after {
+            left: 50%;
+            top: 50%;
+        }
+
+        .nav-item.highlight:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.5);
+        }
 
         /* Main Content Area */
         .main-content {
             display: flex;
             flex-direction: column;
-            overflow: hidden; 
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+            position: relative;
         }
 
-        /* Header */
+        /* Premium Header */
         .header {
-            background: var(--dark-background);
-            padding: 2rem 3rem; 
+            background: var(--glass-background);
+            padding: 2rem 3rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--outline-color);
-            position: sticky; 
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(var(--blur-intensity));
+            position: sticky;
             top: 0;
             z-index: 100;
         }
 
         .header-content h1 {
-            font-size: 3rem; 
+            font-size: 2.8rem;
             font-weight: 700;
             margin-bottom: 0.4rem;
-            letter-spacing: -0.04em;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-light) 0%, var(--text-dark-gray) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .header-content p.date {
@@ -187,38 +280,44 @@
         .header .user-info {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
         .header .current-time {
-            font-size: 1.1rem; /* Smaller, as in image */
+            font-size: 1.1rem;
             color: var(--primary-orange);
             font-weight: 600;
-            margin-right: 1.5rem; /* Space before BU */
+            margin-right: 0.5rem;
+            text-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
         }
 
         .notification-btn {
-            background: var(--card-background); 
+            background: var(--card-background);
             border: 1px solid var(--outline-color);
             color: var(--text-dark-gray);
-            font-size: 1.5rem; 
+            font-size: 1.2rem;
             cursor: pointer;
             padding: 0.7rem;
-            border-radius: 50%; 
-            width: 50px; 
-            height: 50px; 
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s ease, border-color 0.2s ease;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
+
         .notification-btn:hover {
-            background: var(--outline-color);
+            background: var(--primary-orange);
+            color: white;
             border-color: var(--primary-orange);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-glow);
         }
 
         .user-avatar {
-            width: 50px; /* Slightly smaller avatar as in image */
+            width: 50px;
             height: 50px;
             background: var(--avatar-background);
             border-radius: 50%;
@@ -226,179 +325,162 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 24px;
+            font-size: 1.2rem;
             color: var(--text-light);
-            border: 2px solid rgba(255, 255, 255, 0.2); 
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-medium);
+            transition: all 0.3s ease;
         }
 
-        /* Dashboard Grid */
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.5);
+        }
+
+        /* Premium Dashboard Grid */
         .dashboard-grid {
             flex-grow: 1;
-            padding: 3rem; 
+            padding: 2.5rem;
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Three equal columns */
-            grid-auto-rows: min-content; /* Adjust rows based on content */
-            gap: 2.5rem; 
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: minmax(200px, auto);
+            gap: 2rem;
             align-content: start;
-            overflow-y: auto; 
+            overflow-y: auto;
         }
 
+        /* Glassmorphism Cards */
         .metric-card, .wide-card {
-            background: var(--card-background);
+            background: var(--glass-background);
             border-radius: var(--card-radius);
-            padding: 2.2rem; 
-            border: 1px solid var(--outline-color);
+            padding: 2.2rem;
+            border: 1px solid var(--glass-border);
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+            backdrop-filter: blur(var(--blur-intensity));
+            box-shadow: var(--shadow-soft);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow: hidden;
+        }
+
+        .metric-card::before, .wide-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .metric-card:hover::before, .wide-card:hover::before {
+            opacity: 1;
+        }
+
+        .metric-card:hover, .wide-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .metric-card {
             align-items: center;
             text-align: center;
-            /* No justify-content: space-between here as per image layout */
         }
 
         .wide-card {
-            grid-column: span 3; /* Weight Journey spans all 3 columns */
+            grid-column: span 3;
         }
         
         .small-card {
-            grid-column: span 1; /* Weekly Trend and Daily Summary take 1 column each */
+            grid-column: span 1;
         }
 
+        /* Metric Header */
         .metric-header {
             display: flex;
-            flex-direction: column; /* Stack percentage below title */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            margin-bottom: 1.5rem; /* Space before circle */
+            margin-bottom: 1.5rem;
         }
+
         .metric-header h3 {
-            font-size: 1.3rem; 
+            font-size: 1.3rem;
             font-weight: 600;
             color: var(--text-light);
             margin-bottom: 0.5rem;
         }
+
         .metric-header .percentage-badge {
-            background: none; /* No background for percentage as in image */
-            color: var(--text-dark-gray); /* Grey color for percentage */
+            background: none;
+            color: var(--text-dark-gray);
             padding: 0;
             border-radius: 0;
-            font-size: 0.95rem; /* Slightly smaller */
+            font-size: 0.95rem;
             font-weight: 500;
             margin-left: 0;
             letter-spacing: 0;
         }
 
-        .metric-circle {
-            width: 140px; 
-            height: 140px;
-            border-radius: 50%;
+        /* Simplified Metric Display (No Circles) */
+        .metric-display {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem; /* Space before value */
-            position: relative;
-            background: transparent;
-        }
-        .metric-circle::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 8px solid var(--outline-color); 
-            z-index: 1;
+            margin-bottom: 1.5rem;
         }
 
-        /* Dynamic progress circle (simulated with border-top) */
-        .metric-circle.steps::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 8px solid transparent;
-            border-top-color: var(--progress-bar-fill); 
-            transform: rotate(-135deg); 
-            z-index: 2;
-        }
-        .metric-circle.calories::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 8px solid transparent;
-            border-top-color: var(--progress-bar-fill);
-            transform: rotate(-130deg); 
-            z-index: 2;
-        }
-
-        .metric-circle .icon {
-            font-size: 3.5rem; 
+        .metric-icon {
+            font-size: 3.5rem;
             color: var(--progress-bar-fill);
-            position: relative;
-            z-index: 3;
-        }
-        /* SVG icons for steps and calories (updated for better sizing) */
-        .metric-circle .icon.steps-icon {
-            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="%23FF9F0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 19H9M12 17V3L6 8M18 10L12 15"/></svg>');
-            width: 60px;
-            height: 60px;
-        }
-
-        .metric-circle .icon.calories-icon {
-            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="%23FF9F0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 20.75c1.1-.33 2.1-.87 3-1.6M14 17.5c.34-1 .36-2.07.21-3.13-.34-2.15-2.22-3.8-4.47-4.14-2.25-.34-4.22.9-5.11 2.91-.48 1.08-.57 2.27-.32 3.42.3 1.4.92 2.65 1.77 3.73M17.5 10c0-2.2-1.8-4-4-4s-4 1.8-4 4 1.8 4 4 4 4-1.8 4-4Z"></path><path d="M10.74 2.05c-.06-.52.27-1.02.79-1.08s1.02.27 1.08.79c.02.16 0 .32-.05.47M7.5 5.5c-.32.48-.26 1.15.15 1.54.41.39 1.1.41 1.5.07M20.5 5.5c.32.48.26 1.15-.15 1.54-.41.39-1.1.41-1.5.07M20.9 9.25c.52.06 1.02-.27 1.08-.79s-.27-1.02-.79-1.08c-.16-.02-.32 0-.47.05M17.5 20.5c.32-.48.26-1.15-.15-1.54-.41-.39-1.1-.41-1.5-.07M3.1 9.25c-.52.06-1.02-.27-1.08-.79s-.27-1.02.79-1.08c.16-.02-.32 0-.47.05M4 17.5c-.48-.32-1.15-.26-1.54.15-.39.41-.41 1.1-.07 1.5"></path></svg>');
-            width: 60px;
-            height: 60px;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px rgba(255, 159, 10, 0.5));
         }
 
         .metric-value {
-            font-size: 2.2rem; /* Adjusted size as in image */
+            font-size: 2.2rem;
             font-weight: bold;
             color: var(--text-light);
             letter-spacing: -0.05em;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
         
-        /* AI Recommendation Card specific styling */
+        /* AI Recommendation Card */
         .ai-recommendation-card .metric-header {
-            flex-direction: row; /* Title and badge side-by-side */
+            flex-direction: row;
             margin-bottom: 0;
-            align-self: flex-start; /* Align left */
+            align-self: flex-start;
         }
+
         .ai-recommendation-card .metric-header h3 {
             margin-bottom: 0;
             font-size: 1.3rem;
         }
-        .ai-recommendation-card .metric-circle {
-            border: 8px solid var(--outline-color); 
-            margin-top: 2rem; /* More space from header */
+
+        .ai-recommendation-card .metric-display {
+            margin-top: 1.5rem;
             margin-bottom: 1rem;
-            width: 100px; /* Smaller circle for AI card */
-            height: 100px;
         }
-        .ai-recommendation-card .icon {
-            font-size: 3rem; 
-            color: #725BCC; 
+
+        .ai-recommendation-card .metric-icon {
+            font-size: 3rem;
+            color: #725BCC;
         }
+
         .ai-recommendation-card p.recommendation-text {
-            font-size: 1.1rem; 
+            font-size: 1.1rem;
             color: var(--text-light);
-            text-align: left; /* Align left */
+            text-align: left;
             align-self: flex-start;
             margin-bottom: 0.5rem;
         }
+
         .ai-recommendation-card p.subtitle {
-            color: var(--text-dark-gray); 
+            color: var(--text-dark-gray);
             font-size: 0.95rem;
             text-align: left;
             align-self: flex-start;
@@ -407,7 +489,7 @@
         /* Weight Journey Card */
         .weight-journey {
             display: grid;
-            grid-template-columns: 1fr; /* Single column layout within card */
+            grid-template-columns: 1fr;
             gap: 1.5rem;
             padding: 2.2rem;
             position: relative;
@@ -416,7 +498,7 @@
         .weight-journey h2 {
             font-size: 1.8rem;
             font-weight: 600;
-            margin-bottom: 0; /* Adjusted margin */
+            margin-bottom: 0;
             color: var(--text-light);
             letter-spacing: -0.03em;
         }
@@ -425,7 +507,7 @@
             position: absolute;
             top: 2.2rem;
             right: 2.2rem;
-            width: 40px; 
+            width: 40px;
             height: 40px;
             border-radius: 50%;
             background: var(--red-accent);
@@ -433,29 +515,25 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3);
         }
+
         .weight-journey .edit-icon:hover {
-            transform: scale(1.08);
+            transform: scale(1.08) rotate(90deg);
             box-shadow: 0 6px 15px rgba(255, 59, 48, 0.4);
-        }
-        .weight-journey .edit-icon::before {
-            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>');
-            width: 24px;
-            height: 24px;
         }
 
         .weight-stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             text-align: center;
-            margin-top: 2rem; /* Space from title */
-            margin-bottom: 1.5rem; /* Space before progress bar */
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .weight-stat-item p:first-child {
-            font-size: 1.8rem; /* Adjusted value size */
+            font-size: 1.8rem;
             font-weight: bold;
             color: var(--text-light);
             margin-bottom: 0.5rem;
@@ -463,7 +541,7 @@
         }
 
         .weight-stat-item p:last-child {
-            font-size: 0.95rem; /* Adjusted label size */
+            font-size: 0.95rem;
             color: var(--text-dark-gray);
             font-weight: 500;
         }
@@ -471,73 +549,44 @@
         .weight-stat-item:nth-child(3) p:first-child {
             color: var(--primary-orange);
             cursor: pointer;
-            text-decoration: none; 
+            transition: all 0.3s ease;
+        }
+
+        .weight-stat-item:nth-child(3) p:first-child:hover {
+            text-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
         }
         
         .weight-progress-line {
-            height: 8px; 
+            height: 8px;
             background: var(--outline-color);
             border-radius: 4px;
-            margin-bottom: 1.5rem; /* Space before weekly trend */
+            margin-bottom: 1.5rem;
             position: relative;
+            overflow: hidden;
         }
+
         .weight-progress-line::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             height: 100%;
-            width: 45%; 
+            width: 45%;
             background: var(--progress-bar-fill);
             border-radius: 4px;
             transition: width 0.5s ease-out;
         }
 
-        .weekly-trend-section {
-            display: flex;
-            flex-direction: column;
+        /* Weight Graph Container */
+        .weight-graph-container {
             margin-top: 1.5rem;
+            height: 200px;
+            position: relative;
         }
 
-        .weekly-trend-graph {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 120px; /* Reduced height to fit in card */
-            padding-bottom: 10px;
-            gap: 15px;
-        }
-
-        .trend-bar-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex-grow: 1; 
-        }
-
-        .trend-bar {
-            width: 25px; /* Thinner bars */
-            background: var(--weekly-trend-bar);
-            border-radius: 6px 6px 0 0;
-            margin-bottom: 8px;
-            transition: height 0.3s ease;
-            box-shadow: 0 -4px 10px rgba(255, 107, 0, 0.15);
-        }
-
-        .trend-bar.current {
-            background: var(--weekly-trend-current-bar);
-            box-shadow: 0 -4px 10px rgba(255, 159, 10, 0.25);
-        }
-
-        .trend-label {
-            font-size: 0.9rem; /* Smaller label */
-            color: var(--text-medium-gray);
-            font-weight: 500;
-        }
-
-        /* Weekly Trend and Daily Summary Cards (individual cards as per image) */
+        /* Weekly Trend and Daily Summary Cards */
         .weekly-trend-card, .daily-summary-card {
-            grid-column: span 1; /* Each takes 1 column */
+            grid-column: span 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -565,7 +614,7 @@
 
         .weekly-trend-card .progress-detail span:last-child, .daily-summary-card .progress-detail span:last-child {
             font-size: 1.05rem;
-            color: var(--primary-orange); /* Use primary orange for values */
+            color: var(--primary-orange);
             font-weight: 600;
         }
 
@@ -574,17 +623,77 @@
             background: var(--outline-color);
             border-radius: 4px;
             margin-bottom: 1.5rem;
+            overflow: hidden;
         }
+
         .small-progress-fill {
             height: 100%;
             border-radius: 4px;
             transition: width 0.5s ease-out;
+            position: relative;
         }
+
         .small-progress-fill.water {
-            background: #007AFF; /* iOS blue for water */
+            background: var(--blue-accent);
         }
+
         .small-progress-fill.sleep {
-            background: #34C759; /* iOS green for sleep */
+            background: var(--green-accent);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .web-app {
+                grid-template-columns: 260px 1fr;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .wide-card {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .web-app {
+                grid-template-columns: 1fr;
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .wide-card {
+                grid-column: 1;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-orange);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--progress-bar-fill);
         }
     </style>
 </head>
@@ -593,49 +702,50 @@
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="logo">
-                <h2>FitCal</h2>
+                <!-- Replace with your actual logo path -->
+                <div style="color: var(--primary-orange); font-size: 2rem; font-weight: 800;">FITCAL</div>
             </div>
             <nav class="nav-menu">
                 <a href="#" class="nav-item active">
                     <span class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+                        <i class="fas fa-home"></i>
                     </span>
                     <span>Home</span>
                 </a>
                 <a href="#" class="nav-item">
                     <span class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        <i class="fas fa-dumbbell"></i>
                     </span>
                     <span>Workouts</span>
                 </a>
                 <a href="#" class="nav-item">
                     <span class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V5a3 3 0 0 0-3-3Z"/><path d="M12 14v8"/><path d="M21 15h-3a3 3 0 0 0-3 3v4h6v-4a3 3 0 0 0-3-3Z"/><path d="M3 15h3a3 3 0 0 1 3 3v4H3v-4a3 3 0 0 1-3-3Z"/></svg>
+                        <i class="fas fa-utensils"></i>
                     </span>
                     <span>Meals</span>
                 </a>
                 <a href="#" class="nav-item">
                     <span class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                        <i class="fas fa-music"></i>
                     </span>
                     <span>Music</span>
                 </a>
                 <a href="#" class="nav-item">
                     <span class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <i class="fas fa-user"></i>
                     </span>
                     <span>Profile</span>
                 </a>
                 <a href="#" class="nav-item">
                     <span class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <i class="fas fa-compass"></i>
                     </span>
                     <span>Explore</span>
                 </a>
             </nav>
             <a href="#" class="nav-item highlight">
                 <span class="icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    <i class="fas fa-chart-line"></i>
                 </span>
                 <span>Full Plan</span>
             </a>
@@ -646,13 +756,13 @@
             <!-- Header -->
             <header class="header">
                 <div class="header-content">
-                    <h1>Good Morning <span style="color: var(--text-light);">Bubbles</span></h1>
+                    <h1>Good Morning <span style="color: var(--primary-orange);">Bubbles</span></h1>
                     <p class="date">Wednesday, November 5</p>
                 </div>
                 <div class="user-info">
                     <div class="current-time">11:55 AM</div>
                     <button class="notification-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        <i class="fas fa-bell"></i>
                     </button>
                     <div class="user-avatar">BU</div>
                 </div>
@@ -666,10 +776,12 @@
                         <h3>Steps</h3>
                         <div class="percentage-badge">83% of goal</div>
                     </div>
-                    <div class="metric-circle steps">
-                        <span class="icon steps-icon"></span>
+                    <div class="metric-display">
+                        <div class="metric-icon">
+                            <i class="fas fa-walking"></i>
+                        </div>
+                        <p class="metric-value">12 457</p>
                     </div>
-                    <p class="metric-value">12 457</p>
                 </div>
 
                 <!-- Calories Card -->
@@ -678,10 +790,12 @@
                         <h3>Calories</h3>
                         <div class="percentage-badge">84% of goal</div>
                     </div>
-                    <div class="metric-circle calories">
-                        <span class="icon calories-icon"></span>
+                    <div class="metric-display">
+                        <div class="metric-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <p class="metric-value">1 843</p>
                     </div>
-                    <p class="metric-value">1 843</p>
                 </div>
 
                 <!-- AI Recommendations Card -->
@@ -689,8 +803,10 @@
                     <div class="metric-header" style="flex-direction: row; justify-content: flex-start;">
                         <h3>AI Recommendation</h3>
                     </div>
-                    <div class="metric-circle">
-                        <span class="icon" style="font-size: 3rem; color: #725BCC;">💡</span>
+                    <div class="metric-display">
+                        <div class="metric-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
                     </div>
                     <p class="recommendation-text">Increase protein intake</p>
                     <p class="subtitle">Based on your recent meals and activity levels.</p>
@@ -699,7 +815,9 @@
                 <!-- Weight Journey Card -->
                 <div class="wide-card weight-journey">
                     <h2>Weight Journey</h2>
-                    <div class="edit-icon"></div>
+                    <div class="edit-icon">
+                        <i class="fas fa-pen"></i>
+                    </div>
                     <div class="weight-stats-grid">
                         <div class="weight-stat-item">
                             <p>75 kg</p>
@@ -716,30 +834,9 @@
                     </div>
                     <div class="weight-progress-line"></div>
 
-                    <div class="weekly-trend-section">
-                        <h3>Weekly Trend</h3>
-                        <div class="weekly-trend-graph">
-                            <div class="trend-bar-item">
-                                <div class="trend-bar" style="height: 40%;"></div>
-                                <span class="trend-label">W1</span>
-                            </div>
-                            <div class="trend-bar-item">
-                                <div class="trend-bar" style="height: 60%;"></div>
-                                <span class="trend-label">W2</span>
-                            </div>
-                            <div class="trend-bar-item">
-                                <div class="trend-bar" style="height: 75%;"></div>
-                                <span class="trend-label">W3</span>
-                            </div>
-                            <div class="trend-bar-item">
-                                <div class="trend-bar" style="height: 65%;"></div>
-                                <span class="trend-label">W4</span>
-                            </div>
-                            <div class="trend-bar-item">
-                                <div class="trend-bar current" style="height: 83%;"></div>
-                                <span class="trend-label">Now</span>
-                            </div>
-                        </div>
+                    <!-- Weight Graph -->
+                    <div class="weight-graph-container">
+                        <canvas id="weightChart"></canvas>
                     </div>
                 </div>
 
@@ -769,14 +866,14 @@
                     <p class="subtitle" style="margin-bottom: 2rem;">Quick overview of your day.</p>
                     <div class="progress-detail">
                         <span>Water Intake</span>
-                        <span style="color: #007AFF;">2.5 L / 3 L</span>
+                        <span style="color: var(--blue-accent);">2.5 L / 3 L</span>
                     </div>
                     <div class="small-progress-bar">
                         <div class="small-progress-fill water" style="width: 83%;"></div>
                     </div>
                     <div class="progress-detail" style="margin-top: 1.5rem;">
                         <span>Sleep Overview</span>
-                        <span style="color: #34C759;">7h 30m</span>
+                        <span style="color: var(--green-accent);">7h 30m</span>
                     </div>
                     <div class="small-progress-bar">
                         <div class="small-progress-fill sleep" style="width: 90%;"></div>
@@ -786,5 +883,96 @@
             </div>
         </main>
     </div>
+
+    <script>
+        // Initialize the weight chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('weightChart').getContext('2d');
+            
+            // Dummy weight data for the last 8 weeks
+            const weightData = [78.5, 77.8, 77.2, 76.5, 76.0, 75.6, 75.2, 75.0];
+            const weeks = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'Now'];
+            
+            const weightChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: weeks,
+                    datasets: [{
+                        label: 'Weight (kg)',
+                        data: weightData,
+                        borderColor: '#FF6B35',
+                        backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#FF6B35',
+                        pointBorderColor: '#FFFFFF',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(28, 28, 30, 0.9)',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#8E8E93',
+                            borderColor: '#FF6B35',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 74,
+                            max: 80,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#8E8E93',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#8E8E93',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Update current time
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                document.querySelector('.current-time').textContent = timeString;
+            }
+            
+            updateTime();
+            setInterval(updateTime, 60000);
+        });
+    </script>
 </body>
 </html>
